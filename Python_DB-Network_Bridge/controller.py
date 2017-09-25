@@ -3,10 +3,7 @@ import network
 import database
 
 network.ser.flush()
-i = 0;
 while True:
 	network.network_handler()
-	network.send_ping(i)
-	i = i+1
+	database.database_handler()	
 	print()
-
