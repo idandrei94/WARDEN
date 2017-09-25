@@ -11,7 +11,7 @@ def database_handler():
     "Reads command from commands table and take action depending on command type"
     c.execute("SELECT * FROM commands")
     data = c.fetchone()
-    if( data['ctype'] == 'ping'):
+    if( data != None and data['ctype'] == 'ping'):
         network.send_ping(data['destination_idb'])
         c.execute("DELETE FROM commands where idc = {}".format(data['idc']))
         db.commit()
@@ -52,7 +52,7 @@ def ping_reply(ID, timeStamp):
         db.commit()
     return;
 
-def receive_accident(sourceID, message, timeStamp):
+def receive_accident(sourceID, timestamp, message):
     "Checks if notification is already in latest notifications and if not, \
     checks if it is in history and if the time stamp is less than 24h doesn't add it anymore"
     c.execute("SELECT * FROM notifications where idb = {}".format(sourceID))
@@ -65,30 +65,30 @@ def receive_accident(sourceID, message, timeStamp):
         data = c.fetchone()
         if(c.rowcount > 0):
             print("already in history")
-            timeDiff = (timeStamp - data['time']) / 3600
+            timeDiff = (timestamp - data['time']) / 3600
             if(timeDiff < 24):
                 print("can't be real. you got injured too much in past 24 h!")
                 return;
             else:
                 print("God, this dude has bad luck!")
                 c.execute("INSERT INTO notifications(idb, ntype, ninfo, time) \
-                VALUES({}, '{}', '{}', {})".format(sourceID,'accident', message, timeStamp))
+                VALUES({}, '{}', '{}', {})".format(sourceID,'accident', message, timestamp))
                 db.commit()
         else:
             print("not in history either so add!")
             c.execute("INSERT INTO notifications(idb, ntype, ninfo, time) \
-                VALUES({}, '{}', '{}', {})".format(sourceID,'accident', message, timeStamp))
+                VALUES({}, '{}', '{}', {})".format(sourceID,'accident', message, timestamp))
             db.commit()
     return;
 
-def cancel_accident(sourceID, timeStamp):
+def cancel_accident(sourceID, timestamp, message):
     "Removes accident notification from latest if there and puts it in history with 'cancelled' message type"
     c.execute("SELECT * FROM notifications where idb = {}".format(sourceID))
     data = c.fetchone()
     if(c.rowcount > 0):
         print("removing from list and adding to history")
         c.execute("INSERT INTO history(idn, idb, ntype, ninfo, status, time, timeUpdated) \
-                VALUES({}, {}, '{}', '{}', '{}', {}, {})".format(data["idn"], sourceID, 'accident', data["ninfo"], "cancelled", data["time"], timeStamp))
+                VALUES({}, {}, '{}', '{}', '{}', {}, {})".format(data["idn"], sourceID, 'accident', data["ninfo"], "cancelled", data["time"], timestamp))
         db.commit()
         c.execute("DELETE FROM notifications where idb = {}".format(sourceID))
         db.commit()
@@ -96,4 +96,4 @@ def cancel_accident(sourceID, timeStamp):
 
  
 
-db.close()
+#db.close()

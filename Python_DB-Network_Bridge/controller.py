@@ -1,9 +1,12 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.5
 import network
 import database
 
 network.ser.flush()
 while True:
 	network.network_handler()
-	database.database_handler()	
+	try:
+		database.database_handler()	
+	except:
+		print("DB error")
 	print()

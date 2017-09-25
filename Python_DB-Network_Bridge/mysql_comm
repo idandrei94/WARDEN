@@ -1,0 +1,3 @@
+INSERT INTO warden.all_beacons VALUES();
+INSERT INTO warden.new_beacons(idnb, x, y, comments) VALUES(....)
+INSERT INTO warden.current_beacons(idcb, x, y, comments, last_seen) VALUES(....)
