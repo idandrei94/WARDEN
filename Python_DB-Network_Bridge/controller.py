@@ -1,12 +1,12 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.5
 import network
 import database
 
 network.ser.flush()
-i = 0;
 while True:
 	network.network_handler()
-	network.send_ping(i)
-	i = i+1
+	try:
+		database.database_handler()	
+	except:
+		print("DB error")
 	print()
-

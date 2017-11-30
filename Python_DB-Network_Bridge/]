@@ -43,16 +43,15 @@ def handle_message(message):
 		if msg_type == "CONFIRM_PING":
 			ID = bytes_to_word(message[5], message[6])
 			timestamp = int(time.time())
-			print("Ping reply with ID " + str(ID) )
 			database.ping_reply(ID, timestamp)
 		elif msg_type == "ACCIDENT":
 			ID = bytes_to_word(message[5], message[6]) 
 			timestamp = int(time.time())
-			database.receive_accident(ID, timestamp, "Foc si Pucioasa!")
+			database.receive_accident(ID, timestamp)
 		elif msg_type == "CANCEL_ACCIDENT":
 			ID = bytes_to_word(message[5], message[6]) 
 			timestamp = int(time.time())
-			database.cancel_accident(ID, timestamp, "Accident canceled")
+			database.cancel_accident(ID, timestamp, "")
 	except KeyError:
 		print("Invalid message type")
 
