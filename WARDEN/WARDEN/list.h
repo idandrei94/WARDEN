@@ -139,7 +139,7 @@ T List<T>::pop_front() {
 
 template <class T >
 T List<T>::pop_back() {
-		if (size == 0) {
+		if (size() == 0) {
 			return nullptr;
 		}
 		--count;

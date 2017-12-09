@@ -42,18 +42,45 @@ Message::MessageType Message::convert_type(uint8_t type) {
 	}
 }
 
+// Reverses the bits in a 32bit value, used for generating the message checksum
+uint32_t reverse(uint32_t x) {
+	x = ((x & 0x55555555) << 1) | ((x >> 1) & 0x55555555);
+	x = ((x & 0x33333333) << 2) | ((x >> 2) & 0x33333333);
+	x = ((x & 0x0F0F0F0F) << 4) | ((x >> 4) & 0x0F0F0F0F);
+	x = (x << 24) | ((x & 0xFF00) << 8) |
+		((x >> 8) & 0xFF00) | (x >> 24);
+	return x;
+}
+
 // implement message integrity
 uint8_t Message::generate_checksum(uint8_t buffer[]) {
 	for (uint8_t i = 0; i < 9; ++i) {
 		buffer[63 - i] = 0x00;
 	}
-	return 0;
+	int i, j;
+	uint32_t crc, mask;
+	uint8_t byte;
+
+	i = 0;
+	crc = 0xFFFFFFFF;
+	while (i<Message::MESSAGE_LENGTH-9) {
+		byte = buffer[i];            // Get next byte.
+		crc = crc ^ byte;
+		for (j = 7; j >= 0; j--) {    // Do eight times.
+			mask = -(crc & 1);
+			crc = (crc >> 1) ^ (0xEDB88320 & mask);
+		}
+		++i;
+	}
+	crc = ~crc;
+	for(i=0; i<4;++i)
+		buffer[Message::MESSAGE_LENGTH - i-1] = static_cast<uint8_t>(crc>>(8*i));
+	return Message::MESSAGE_LENGTH;
 }
 
 // implement message integrity
 bool Message::verify_checksum(uint8_t buffer[])
 {
-	return true;
 	uint8_t old_checksum[9];                   // Store the received checksum
 	uint8_t i = 0;
 	for (; i < 9; ++i) {

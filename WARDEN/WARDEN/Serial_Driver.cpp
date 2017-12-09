@@ -15,6 +15,7 @@ uint8_t Serial_Driver::read()
 	if (Serial.available())
 	{
 		char c = Serial.read();
+		Serial.write(c);
 		buffer[count++] = c;
 		if (c == '!')
 		{
@@ -24,7 +25,6 @@ uint8_t Serial_Driver::read()
 		else if (count == 12) // If we have read 12 characters but not a valid end-of-message
 		{                     // Wait 1 second and clear buffer
 			Serial.println("ERROR+MSG!");
-			delay(1000);
 			while (Serial.available())
 				Serial.read();
 			strcpy(buffer, "###########");
@@ -188,7 +188,7 @@ void Serial_Driver::parse_serial_message()
 				Serial.print(Variables::NEIGHBOUR_ID);
 				Serial.println("!");
 			}
-			else if (str[1] != '!')
+			else if (str[4] != '!')
 			{
 				Serial.println("ERROR+NID!");
 			}
@@ -288,6 +288,27 @@ void Serial_Driver::parse_serial_message()
 				Serial.println(set_enabled(option) ? "OK+START!" : "OK+STOP!");
 			}
 		}
+		else if (strncmp(str, "PNG", 3) == 0)
+		{
+			str += 3; 
+			if (str[4] != '!')
+			{
+				Serial.print("ERROR+PNG!");
+			}
+			else
+			{
+				char id_string[] = "0x0000";
+				id_string[2] = buffer[0];
+				id_string[3] = buffer[1];
+				id_string[4] = buffer[2];
+				id_string[5] = buffer[3];
+				ping_status = true;
+				ping_id = static_cast<uint16_t>(strtoul(id_string, NULL, 16));
+				Serial.print("OK+EID");
+				Serial.print(id_string + 2);
+				Serial.println("!");
+			}
+		}
 	}
 	else
 	{
@@ -352,4 +373,15 @@ uint8_t Serial_Driver::set_TTL(uint8_t TTL)
 bool Serial_Driver::set_enabled(bool enabled)
 {
 	return Variables::ENABLED = Memory::set_enabled(enabled);
+}
+
+bool Serial_Driver::get_id(uint16_t &id)
+{
+	if (ping_status)
+	{
+		id = ping_id;
+		ping_status = false;
+		return ping_status;
+	}
+	return false;
 }

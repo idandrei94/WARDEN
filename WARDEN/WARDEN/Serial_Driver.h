@@ -4,7 +4,6 @@
 
 class Serial_Driver
 {
-
 	/*
 	Commands:
 	WRD+DBGx! - set debug ON/OFF with 1/0
@@ -17,13 +16,17 @@ class Serial_Driver
 	WRD+BCHxx! - set bridge channel (11 -> 20) of a slave unit
 	WRD+TTLxx! - set the TTL of the messages sent by this unit
 	WRD+STATUSx! - enable/disable the unit
+	WRD+PNGxxxx! - pings the targeted beacon ID
 	*/
 
 public:
 	Serial_Driver();
 	uint8_t read();
+	bool get_id(uint16_t &id);
 
 private:
+	uint16_t ping_id = 0x00;
+	bool ping_status = false;
 	uint8_t count = 0;
 	char buffer[12];
 
@@ -39,6 +42,7 @@ private:
 	uint8_t set_bridge_channel(uint8_t channel);
 	uint8_t set_TTL(uint8_t TTL);
 	bool set_enabled(bool enabled);
+
 
 	void reset_buffer();
 };
