@@ -84,6 +84,8 @@
   <ItemGroup>
     <ClCompile Include="..\WARDEN\HC12_Driver.cpp" />
     <ClCompile Include="..\WARDEN\message.cpp" />
+    <ClCompile Include="..\WARDEN\Persistence.cpp" />
+    <ClCompile Include="..\WARDEN\Serial_Driver.cpp" />
     <ClCompile Include="..\WARDEN\system_variables.cpp" />
     <ClCompile Include="master.cpp" />
     <ClCompile Include="message_handler.cpp" />
@@ -92,6 +94,8 @@
     <ClInclude Include="..\WARDEN\HC12_Driver.h" />
     <ClInclude Include="..\WARDEN\list.h" />
     <ClInclude Include="..\WARDEN\message.h" />
+    <ClInclude Include="..\WARDEN\Persistence.h" />
+    <ClInclude Include="..\WARDEN\Serial_Driver.h" />
     <ClInclude Include="..\WARDEN\system_variables.h" />
     <ClInclude Include="master.h" />
     <ClInclude Include="message_handler.h" />

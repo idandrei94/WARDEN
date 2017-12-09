@@ -5,16 +5,20 @@
 */
 
 #include "master.h"
+#include "Persistence.h"
 
 Master *master;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
-	Serial.begin(9600);
+	Memory::load_system_variables();
 	master = new Master();
-	Serial.println("##############");
-	Serial.println("Master started");
-	Serial.println("##############");
+	if (Variables::DEBUG)
+	{
+		Serial.println("##############");
+		Serial.println("Master started");
+		Serial.println("##############");
+	}
 }
 
 // the loop function runs over and over again until power down or reset

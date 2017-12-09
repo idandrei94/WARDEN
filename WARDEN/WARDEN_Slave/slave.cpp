@@ -6,12 +6,14 @@ Slave::Slave() :
 	bridge_driver(new HC12_Driver(HC12_Driver::HC12_Modes::BRIDGE, 50)),
 	call_msg(),
 	handler(new Message_Handler(Variables::LIST_SIZE)),
-	group_bridge_switch(true)
+	group_bridge_switch(true),
+	s_driver()
 {
 }
 
 void Slave::action()
 {
+	s_driver.read();
 	if (group_bridge_switch) // Listen group once, then listen on the bridge once
 	{
 		if (group_driver->get_message(group_receive_buffer, Message::MESSAGE_LENGTH) == Message::MESSAGE_LENGTH)

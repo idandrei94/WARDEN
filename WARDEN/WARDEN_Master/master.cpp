@@ -1,7 +1,7 @@
 #include "master.h"
 #include "system_variables.h"
 
-Master::Master() : driver(HC12_Driver::HC12_Modes::GROUP), current_neighbour(0), call_msg(), handler(Variables::LIST_SIZE)
+Master::Master() : driver(HC12_Driver::HC12_Modes::GROUP), current_neighbour(0), call_msg(), handler(Variables::LIST_SIZE), s_driver()
 {
 
 }
@@ -11,6 +11,7 @@ void Master::action() {
 		Serial.print("Calling neighbour #");
 		Serial.println(current_neighbour);
 	}
+	s_driver.read();
 	driver.send_message(call_msg.gen_message_string(current_neighbour, false), Message::MESSAGE_LENGTH); //Call neighbour
 	if (driver.get_message(receive_buffer, Message::MESSAGE_LENGTH) == Message::MESSAGE_LENGTH) // HC12 received a message
 	{

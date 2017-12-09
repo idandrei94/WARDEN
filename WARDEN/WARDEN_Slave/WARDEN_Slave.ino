@@ -6,12 +6,13 @@
 
 #include "slave.h"
 #include "HC12_Driver.h"
+#include "Persistence.h"
 
 Slave *slave;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
-	Serial.begin(9600);
+	Memory::load_system_variables();
 	slave = new Slave();
 	if (Variables::DEBUG)
 	{
